@@ -1,16 +1,54 @@
 ;;; package --- Company mode backend for C/C++ header files with Irony
 
+;; Copyright (C) 2015 Yutian Li
+
+;; Author: Yutian Li <hotpxless@gmail.com>
+;; Version: 1.0.0
+;; URL: https://github.com/hotpxl/company-irony-c-headers
+;; Keywords: c company
+;; Package-Requires: ((cl-lib "0.5") (irony "0.2"))
+
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 ;;; Commentary:
 
-;;
+;; This file provides `company-irony-c-headers`, a company backend
+;; that completes C/C++ header files. Large chunks of code are taken
+;; from
+;; [company-c-headers](https://github.com/randomphrase/company-c-headers). It
+;; also works with `irony-mode` to obtain compiler options.
+
+;; Usage:
+;;    (require 'company-irony-c-headers)
+;;    ;; Load with `irony-mode` as a grouped backend
+;;    (eval-after-load 'company
+;;      '(add-to-list
+;;        'company-backends '(company-irony-c-headers company-irony)))
+
+;; When compiler options change, call
+;; `company-irony-c-headers-reload-compiler-output` manually to
+;; reload.
 
 ;;; Code:
 
 (require 'cl-lib)
 (require 'irony)
 
-(defvar company-irony-c-headers--compiler-executable "clang-mp-3.6"
+(defvar company-irony-c-headers--compiler-executable "clang++"
   "Compiler executable.")
+
+(setq company-irony-c-headers--compiler-executable "clang++-mp-3.6")
 
 (defun company-irony-c-headers--include-decl ()
   "Match include syntax."
@@ -25,40 +63,42 @@
   '(c++-mode c-mode)
   "Mode supported.")
 
-;; TODO use irony
 (defun company-irony-c-headers--lang ()
   "Get language."
-  '("-x" "c++"))
+  (irony--lang-compile-option))
+  ; '("-x" "c++"))
 
 (defun company-irony-c-headers--default-compiler-options ()
   "Get default compiler options to obtain include paths."
   (append (company-irony-c-headers--lang) '("-v" "-E" "-")))
 
-;; TODO use irony
 (defun company-irony-c-headers--user-compiler-options ()
   "Get compiler options."
-  '("-iquotedup2" "-Idup"))
+  irony--compile-options)
+  ; '("-iquotedup2" "-Idup"))
 
-;; TODO use irony
 (defun company-irony-c-headers--working-dir ()
   "Get working directory."
-  "/Users/hotpxl/tmp/has")
+  irony--working-directory)
+  ; "/Users/hotpxl/tmp/has")
 
 (defvar-local company-irony-c-headers--compiler-output nil
   "Compiler generated output for search paths.")
 
-;;;###autoload
 (defun company-irony-c-headers-reload-compiler-output ()
   "Call compiler to get search paths."
   (interactive)
   (when company-irony-c-headers--compiler-executable
-    (let ((res
-           (with-temp-buffer
+    (setq
+     company-irony-c-headers--compiler-output
+     (let ((uco (company-irony-c-headers--user-compiler-options))
+           (dco (company-irony-c-headers--default-compiler-options)))
+       (with-temp-buffer
              (apply 'call-process
                     company-irony-c-headers--compiler-executable nil t nil
                     (append
-                     (company-irony-c-headers--user-compiler-options)
-                     (company-irony-c-headers--default-compiler-options)))
+                     uco
+                     dco))
              (goto-char (point-min))
              (let (quote-directories
                    angle-directories
@@ -89,10 +129,7 @@
                    (forward-line 1)))
                (list
                 (reverse quote-directories)
-                (reverse angle-directories))
-               ))))
-      (setq company-irony-c-headers--compiler-output res)
-      )))
+                (reverse angle-directories))))))))
 
 (defun company-irony-c-headers--search-paths ()
   "Retrieve compiler search paths."
@@ -122,8 +159,6 @@
          ))
     (company-irony-c-headers--resolve-paths
      (nth 1 (company-irony-c-headers--search-paths)))))
-
-; (company-irony-c-headers--resolved-search-paths t)
 
 (defun company-irony-c-headers--prefix ()
   "Find prefix for matching."
@@ -162,10 +197,6 @@
             real
             'directory subdir))) candidates))))
 
-; (file-directory-p "/Users/hotpxl/tmp/has/o/jcet")
-
-; (company-irony-c-headers--candidates-for "basedir/child" "/Users/hotpxl/tmp/has/")
-
 (defun company-irony-c-headers--candidates (prefix)
   "Return candidates for PREFIX."
   (let* ((quoted (get-text-property 0 'quote prefix))
@@ -184,11 +215,6 @@
      candidates
      :test 'string=
      :from-end t)))
-
-; (cl-delete-duplicates (list (propertize "hh" 'a 2) (propertize "hh" 'b 4)) :test 'string= :from-end t)
-
-; (company-irony-c-headers--candidates "vec")
-; (company-irony-c-headers--candidates "a/")
 
 (defun company-irony-c-headers--meta (candidate)
   "Return the metadata associated with CANDIDATE.  Just the directory."
@@ -221,9 +247,6 @@
              (insert "\"")
            (insert ">")))))
      ))
-
-; (add-to-list 'company-backends 'company-irony-c-headers)
-; (equal (propertize "hh" 'a 2) (propertize "hh" 'a 3))
 
 (provide 'company-irony-c-headers)
 
