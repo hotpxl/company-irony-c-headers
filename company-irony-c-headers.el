@@ -6,7 +6,7 @@
 ;; Version: 1.0.0
 ;; URL: https://github.com/hotpxl/company-irony-c-headers
 ;; Keywords: c company
-;; Package-Requires: ((cl-lib "0.5") (irony "0.2"))
+;; Package-Requires: ((cl-lib "0.5") (company "0.9") (irony "0.2"))
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'company)
 (require 'irony)
 
 (defvar company-irony-c-headers--compiler-executable "clang++"
