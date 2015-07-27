@@ -1,12 +1,14 @@
 # Company Irony C Headers
 
+[![MELPA](http://melpa.org/packages/company-irony-c-headers-badge.svg)](http://melpa.org/#/company-irony-c-headers)
+
 This package provides a [company-mode](https://github.com/company-mode/company-mode) backend for C/C++ header files that works with [irony-mode](https://github.com/Sarcasm/irony-mode).
 
 ## Installation
 
 The recommended way to install `company-irony-c-headers` and its dependencies is through a package manager:
 
-* Using [MELPA](http://melpa.org/) (*Not online yet*)
+* Using [MELPA](http://melpa.org/)
 
         M-x package-install RET company-irony-c-headers RET
 
