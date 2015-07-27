@@ -1,4 +1,4 @@
-;;; package --- Company mode backend for C/C++ header files with Irony
+;;; company-irony-c-headers.el --- Company mode backend for C/C++ header files with Irony
 
 ;; Copyright (C) 2015 Yutian Li
 
@@ -251,4 +251,4 @@
 
 (provide 'company-irony-c-headers)
 
-;;; company-irony-c-headers ends here
+;;; company-irony-c-headers.el ends here
