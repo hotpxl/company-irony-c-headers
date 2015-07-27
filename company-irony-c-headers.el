@@ -65,7 +65,6 @@
 (defun company-irony-c-headers--lang ()
   "Get language."
   (irony--lang-compile-option))
-  ; '("-x" "c++"))
 
 (defun company-irony-c-headers--default-compiler-options ()
   "Get default compiler options to obtain include paths."
@@ -74,12 +73,10 @@
 (defun company-irony-c-headers--user-compiler-options ()
   "Get compiler options."
   irony--compile-options)
-  ; '("-iquotedup2" "-Idup"))
 
 (defun company-irony-c-headers--working-dir ()
   "Get working directory."
   irony--working-directory)
-  ; "/Users/hotpxl/tmp/has")
 
 (defvar-local company-irony-c-headers--compiler-output nil
   "Compiler generated output for search paths.")
@@ -87,11 +84,13 @@
 (defun company-irony-c-headers-reload-compiler-output ()
   "Call compiler to get search paths."
   (interactive)
-  (when company-irony-c-headers--compiler-executable
+  (when (and company-irony-c-headers--compiler-executable
+             (company-irony-c-headers--working-dir))
     (setq
      company-irony-c-headers--compiler-output
      (let ((uco (company-irony-c-headers--user-compiler-options))
-           (dco (company-irony-c-headers--default-compiler-options)))
+           (dco (company-irony-c-headers--default-compiler-options))
+           (default-directory (company-irony-c-headers--working-dir)))
        (with-temp-buffer
              (apply 'call-process
                     company-irony-c-headers--compiler-executable nil t nil
