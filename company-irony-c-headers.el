@@ -49,8 +49,6 @@
 (defvar company-irony-c-headers--compiler-executable "clang++"
   "Compiler executable.")
 
-(setq company-irony-c-headers--compiler-executable "clang++-mp-3.6")
-
 (defun company-irony-c-headers--include-decl ()
   "Match include syntax."
   (rx
