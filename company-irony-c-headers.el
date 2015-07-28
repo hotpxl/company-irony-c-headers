@@ -242,9 +242,10 @@
      (let ((matched (company-irony-c-headers--prefix)))
        (unless (equal matched (file-name-as-directory matched))
          (if (get-text-property 0 'quote matched)
-             (insert "\"")
-           (insert ">")))))
-     ))
+             (unless (looking-at "\"")
+               (insert "\""))
+           (unless (looking-at ">")
+             (insert ">"))))))))
 
 (provide 'company-irony-c-headers)
 
