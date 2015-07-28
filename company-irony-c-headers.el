@@ -162,10 +162,15 @@
   "Find prefix for matching."
   (if (looking-back
        (company-irony-c-headers--include-decl) (line-beginning-position))
-      (if (match-string-no-properties 1)
-          (propertize (match-string-no-properties 1) 'quote nil)
-        (if (match-string-no-properties 2)
-            (propertize (match-string-no-properties 2) 'quote t)))))
+      (let ((match
+             (if (match-string-no-properties 1)
+                 (propertize (match-string-no-properties 1) 'quote nil)
+               (if (match-string-no-properties 2)
+                   (propertize (match-string-no-properties 2) 'quote t)))))
+        (if (and (/= (length match) 0)
+                 (= (aref match (1- (length match))) ?/))
+            (cons match t)
+          match))))
 
 (defun company-irony-c-headers--candidates-for (prefix dir)
   "Return a list of candidates for PREFIX in directory DIR."
@@ -239,7 +244,10 @@
     (location (company-irony-c-headers--location arg))
     (meta (company-irony-c-headers--meta arg))
     (post-completion
+     ;; ARG here lost property. Need to rematch prefix.
      (let ((matched (company-irony-c-headers--prefix)))
+       (if (consp matched)
+           (setq matched (car matched)))
        (unless (equal matched (file-name-as-directory matched))
          (if (get-text-property 0 'quote matched)
              (unless (looking-at "\"")
