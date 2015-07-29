@@ -250,9 +250,11 @@
            (setq matched (car matched)))
        (unless (equal matched (file-name-as-directory matched))
          (if (get-text-property 0 'quote matched)
-             (unless (looking-at "\"")
+             (if (looking-at "\"")
+               (forward-char)
                (insert "\""))
-           (unless (looking-at ">")
+           (if (looking-at ">")
+             (forward-char)
              (insert ">"))))))))
 
 (provide 'company-irony-c-headers)
