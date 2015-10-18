@@ -76,8 +76,9 @@
 
 (defun company-irony-c-headers--working-dir ()
   "Get working directory."
-  (or (file-name-as-directory irony--working-directory)
-      default-directory))
+  (if irony--working-directory
+      (file-name-as-directory irony--working-directory)
+    default-directory))
 
 (defvar-local company-irony-c-headers--compiler-output nil
   "Compiler generated output for search paths.")
