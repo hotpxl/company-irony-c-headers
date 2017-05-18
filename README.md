@@ -4,6 +4,8 @@
 
 This package provides a [company-mode](https://github.com/company-mode/company-mode) backend for C/C++ header files that works with [irony-mode](https://github.com/Sarcasm/irony-mode).
 
+This package is meant to be complementary to [company-irony](https://github.com/Sarcasm/company-irony) by offering completion suggestions to header files.
+
 ## Installation
 
 The recommended way to install `company-irony-c-headers` and its dependencies is through a package manager:
