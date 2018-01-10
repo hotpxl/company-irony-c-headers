@@ -12,7 +12,9 @@ The recommended way to install `company-irony-c-headers` and its dependencies is
 
 * Using [MELPA](http://melpa.org/)
 
-        M-x package-install RET company-irony-c-headers RET
+  ```
+  M-x package-install RET company-irony-c-headers RET
+  ```
 
 ## Usage
 
@@ -20,10 +22,12 @@ It must be loaded after [irony-mode](https://github.com/Sarcasm/irony-mode), whi
 
 Put the following code in your initialization script:
 
-    (require 'company-irony-c-headers)
-    ;; Load with `irony-mode` as a grouped backend
-    (eval-after-load 'company
-      '(add-to-list
-        'company-backends '(company-irony-c-headers company-irony)))
+```elisp
+(require 'company-irony-c-headers)
+;; Load with `irony-mode` as a grouped backend
+(eval-after-load 'company
+  '(add-to-list
+    'company-backends '(company-irony-c-headers company-irony)))
+```
 
-Sometimes when the compiler options change, you need to manually reload header completion cache by invoking `company-irony-c-headers-
+Sometimes when the compiler options change, you need to manually reload header completion cache by invoking `company-irony-c-headers-reload-compiler-output`.
